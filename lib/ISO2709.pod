@@ -1,0 +1,90 @@
+=head1 NAME
+
+ISO2709 - iso2709 parser that only relies on field separators.
+
+=head1 VERSION
+
+Version 0.01
+
+=head1 SYNOPSIS
+
+how to create a cache of ready to use MARC::Record set: 
+
+    use ISO2709;
+    use Storable;
+    sub next_one {
+	state $parser_for_biblios = ISO2709->new->in( 'data/marc.mrc' );
+	$parser_for_biblios->simple_record( $ISO2709::Converter{iso5426} );
+    }
+
+    my @biblios;
+    while ( my $bib = next_one ) {
+	for ( @{ $$bib{463} } ) { s/.*\\035// for @{$$_{5}} }
+	push @biblios,$bib->record;
+    }
+    store \@biblios,'tmp/cache/biblios';
+
+and then 
+
+    use Storable;
+    use MARC::Record;
+    my $biblios = retrieve 'tmp/cache/biblios';
+    for ( @$biblios ) {
+	say $_->subfield(qw< 200 t >);
+    }
+
+=head1 AUTHOR
+
+Marc Chantreux, C<< <marc.chantreux at biblibre.com> >>
+
+=head1 BUGS
+
+Please report any bugs or feature requests to C<bug-iso2709 at rt.cpan.org>, or through
+the web interface at L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=ISO2709>.  I will be notified, and then you'll
+automatically be notified of progress on your bug as I make changes.
+
+
+=head1 SUPPORT
+
+You can find documentation for this module with the perldoc command.
+
+    perldoc ISO2709
+
+
+You can also look for information at:
+
+=over 4
+
+=item * RT: CPAN's request tracker
+
+L<http://rt.cpan.org/NoAuth/Bugs.html?Dist=ISO2709>
+
+=item * AnnoCPAN: Annotated CPAN documentation
+
+L<http://annocpan.org/dist/ISO2709>
+
+=item * CPAN Ratings
+
+L<http://cpanratings.perl.org/d/ISO2709>
+
+=item * Search CPAN
+
+L<http://search.cpan.org/dist/ISO2709>
+
+=back
+
+
+=head1 ACKNOWLEDGEMENTS
+
+
+=head1 COPYRIGHT & LICENSE
+
+Copyright 2009 Marc Chantreux, all rights reserved.
+
+This program is free software; you can redistribute it and/or modify it
+under the same terms as Perl itself.
+
+
+=cut
+
+1; # End of ISO2709
